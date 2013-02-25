@@ -1,10 +1,27 @@
 Ext.define('CustomApp', {
     extend: 'Rally.app.App',
     componentCls: 'app',
-
+    layout: {
+        type: 'vbox',
+        align: 'stretch',
+        style: 'margin: 0 auto;'
+    },
+    items: [
+        {
+            xtype: 'container',
+            itemId: 'dataGridHolder',
+            layout: 'auto'
+        },
+        {
+            xtype: 'container',
+            itemId: 'chartHolder',
+            layout: 'auto'
+        }
+    ],
+    
     launch: function() {
         Ext.create('Rally.data.WsapiDataStore', {
-    		model: 'testcase',
+            model: 'testcase',
 			autoLoad: true,
 			listeners: {
 				load: this._onDataLoaded,
@@ -97,24 +114,85 @@ Ext.define('CustomApp', {
             percent: ((notRan/totalTestCases)*100).toFixed(0)+'%'
 		});
 		
-		this.add({
+		this.down('#dataGridHolder').add({
 			xtype: 'rallygrid',
 			store: Ext.create('Rally.data.custom.Store', {
 				data: records
 			}),
+            width: 400,
+            style: 'margin: 5px auto;',
 			showPagingToolbar: false,
 			columnCfgs: [
 				{
 					text: 'Name', dataIndex: 'name'
 				},
 				{
-					text: 'Value', dataIndex: 'value'
+					text: 'Count', dataIndex: 'value'
 				},
                 {
                     text: 'Percent', dataIndex: 'percent', flex: 1
                 }
 			]
 		});
+        
+        this.down('#chartHolder').add({
+            xtype: 'rallychart',
+            height: 400,
+            chartConfig: {
+                chart: {
+                    type: 'column'  
+                },
+                title: {
+                    text: 'TestCase Counts',
+                    align: 'center'
+                },
+                xAxis: [
+                    {
+                        categories: ['Pass', 'Fail', 'Blocked', 'Error', 'Inconclusive', 'Not Ran'],
+                        title: {
+                            text: 'Verdict'
+                        }
+                    }    
+                ],
+                yAxis: {
+                    title: {
+                        text: 'Count'
+                    }
+                },
+                series: [
+                    {
+                        name: 'TestCase Counts',
+                        data: [
+                            {
+                                color: '#89A54E',
+                                y: pass
+                            },
+                            {
+                                color: '#AA4643',
+                                y: fail
+                            },
+                            {
+                                color: '#DB843D',
+                                y: blocked
+                            },
+                            {
+                                color: '#A47D7C',
+                                y: error
+                            },
+                            {
+                                color: '#80699B',
+                                y: inconclusive
+                            },
+                            {
+                                color: '#4572A7',
+                                y: notRan
+                            }
+                        ]
+                    }    
+                ]
+            }
+            
+        });
 	}
  
 });
