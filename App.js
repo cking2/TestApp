@@ -41,9 +41,6 @@ Ext.define('CustomApp', {
 		var inconclusive = 0;
 		var notRan = 0;
 		
-		var automated = 0;
-		var manual = 0;
-		
 		Ext.Array.each(data, function(record) {
 			switch(record.get('LastVerdict')) {
 				case 'Pass':
@@ -63,15 +60,6 @@ Ext.define('CustomApp', {
 					break;
 				default: 
 					notRan++;
-					break;
-			}
-			
-			switch(record.get('Method')) {
-				case 'Automated':
-					automated++;
-					break;
-				case 'Manual':
-					manual++;
 					break;
 			}
 		});
